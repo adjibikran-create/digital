@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Study Planner | StudyPlanner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body class="light">
+
+<header class="navbar">
+  <h1 class="logo" data-key="logo">📘 StudyPlanner</h1>
+  <nav>
+    <a href="dashboard.html" data-key="navDashboard">Dashboard</a>
+    <a href="planner.html" class="active" data-key="navPlanner">Study Plan</a>
+    <a href="progress.html" data-key="navProgress">Progress</a>
+    <a href="settings.html" data-key="navSettings">Settings</a>
+    <button id="themeToggleHeader">🌙</button>
+  </nav>
+</header>
+
+<main class="planner">
+  <h2 data-key="plannerTitle">Create Your Study Plan</h2>
+  <p data-key="plannerIntro">Plan your day. Take responsibility. Grow daily.</p>
+
+  <div class="planner-form">
+    <input type="text" id="subject" placeholder="Subject (e.g. Math)">
+    <input type="text" id="duration" placeholder="Duration (e.g. 1 hour)">
+    <select id="day">
+      <option value="">Select Day</option>
+      <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+      <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+    </select>
+    <button id="addTaskBtn" class="btn primary" data-key="addTask">Add Task</button>
+  </div>
+
+  <div class="task-list">
+    <h3 data-key="yourTasks">Your Study Tasks</h3>
+    <ul id="tasks"></ul>
+  </div>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  const body=document.body;
+  const themeHeaderBtn=document.getElementById("themeToggleHeader");
+  const addTaskBtn=document.getElementById("addTaskBtn");
+
+  const translations={
+    en:{logo:"📘 StudyPlanner", navDashboard:"Dashboard", navPlanner:"Study Plan", navProgress:"Progress", navSettings:"Settings",
+        plannerTitle:"Create Your Study Plan", plannerIntro:"Plan your day. Take responsibility. Grow daily.",
+        addTask:"Add Task", yourTasks:"Your Study Tasks"},
+    fr:{logo:"📘 Planificateur", navDashboard:"Tableau de bord", navPlanner:"Plan d'étude", navProgress:"Progrès", navSettings:"Paramètres",
+        plannerTitle:"Créez votre plan d'étude", plannerIntro:"Planifiez votre journée. Prenez vos responsabilités. Progressez chaque jour.",
+        addTask:"Ajouter Tâche", yourTasks:"Vos tâches d'étude"},
+    es:{logo:"📘 Planificador", navDashboard:"Tablero", navPlanner:"Plan de estudio", navProgress:"Progreso", navSettings:"Configuración",
+        plannerTitle:"Crea tu plan de estudio", plannerIntro:"Planifica tu día. Sé responsable. Crece diariamente.",
+        addTask:"Agregar Tarea", yourTasks:"Tus tareas de estudio"}
+  };
+
+  let savedTheme=localStorage.getItem("theme")||"light";
+  let savedLang=localStorage.getItem("language")||"en";
+  body.classList.remove("light","dark");
+  body.classList.add(savedTheme);
+
+  function updateLanguage(lang){
+    document.querySelectorAll("[data-key]").forEach(el=>{
+      const key=el.getAttribute("data-key");
+      if(translations[lang][key]) el.innerText=translations[lang][key];
+    });
+  }
+  updateLanguage(savedLang);
+
+  themeHeaderBtn.addEventListener("click",()=>{
+    const isLight=body.classList.contains("light");
+    body.classList.remove(isLight?"light":"dark");
+    body.classList.add(isLight?"dark":"light");
+    localStorage.setItem("theme",isLight?"dark":"light");
+    themeHeaderBtn.textContent=isLight?"☀️":"🌙";
+  });
+
+  // ---- TASKS ----
+  const tasks=JSON.parse(localStorage.getItem("tasks"))||[];
+  const tasksList=document.getElementById("tasks");
+
+  function renderTasks(){
+    tasksList.innerHTML="";
+    tasks.forEach((task,index)=>{
+      const li=document.createElement("li");
+      li.className=task.completed?"done":"";
+      li.innerHTML=`<span>${task.subject} • ${task.duration} • ${task.day}</span>
+                     <div>
+                       <button onclick="toggleTask(${index})">✔</button>
+                       <button onclick="deleteTask(${index})">🗑️</button>
+                     </div>`;
+      tasksList.appendChild(li);
+    });
+  }
+
+  window.toggleTask=index=>{
+    tasks[index].completed=!tasks[index].completed;
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+    renderTasks();
+  }
+
+  window.deleteTask=index=>{
+    tasks.splice(index,1);
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+    renderTasks();
+  }
+
+  addTaskBtn.addEventListener("click",()=>{
+    const subject=document.getElementById("subject").value;
+    const duration=document.getElementById("duration").value;
+    const day=document.getElementById("day").value;
+    if(!subject||!duration||!day){alert("Please fill all fields"); return;}
+    tasks.push({subject,duration,day,completed:false});
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+    renderTasks();
+    document.getElementById("subject").value="";
+    document.getElementById("duration").value="";
+    document.getElementById("day").value="";
+  });
+
+  renderTasks();
+
+  // ---- LANGUAGE CHANGE ----
+  const languageSelect=document.getElementById("languageSelect");
+  if(languageSelect){
+    languageSelect.value=savedLang;
+    languageSelect.addEventListener("change",()=>{
+      const lang=languageSelect.value;
+      localStorage.setItem("language",lang);
+      updateLanguage(lang);
+    });
+  }
+});
+</script>
+</body>
+</html>

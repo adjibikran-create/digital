@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Study Planner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body class="light">
+
+  <!-- Header -->
+  <header class="navbar">
+    <h1 class="logo">📘 StudyPlanner</h1>
+
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Login</a>
+      <a href="#">About</a>
+      <button id="themeToggle">🌙</button>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h2>Plan Smart. Study Better.</h2>
+    <p>Build responsibility, discipline, and academic success.</p>
+
+    <div class="hero-buttons">
+      <a href="#" class="btn primary">Get Started</a>
+      <a href="#" class="btn secondary">Login</a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="card">
+      <h3>📅 Study Planning</h3>
+      <p>Create daily and weekly study plans.</p>
+    </div>
+
+    <div class="card">
+      <h3>🎯 Goal Setting</h3>
+      <p>Set goals and track progress easily.</p>
+    </div>
+
+    <div class="card">
+      <h3>📈 Progress Tracking</h3>
+      <p>Visualize growth and stay motivated.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 StudyPlanner | Designed for Growth</p>
+  </footer>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    const toggleBtn = document.getElementById("themeToggle");
+    toggleBtn.onclick = () => {
+      document.body.classList.toggle("dark");
+      document.body.classList.toggle("light");
+      toggleBtn.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+    };
+  </script>
+
+</body>
+</html>

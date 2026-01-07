@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Settings | StudyPlanner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body class="light">
+
+  <!-- Header -->
+  <header class="navbar">
+    <h1 class="logo" data-key="logo">📘 StudyPlanner</h1>
+    <nav>
+      <a href="dashboard.html" data-key="navDashboard">Dashboard</a>
+      <a href="planner.html" data-key="navPlanner">Study Plan</a>
+      <a href="progress.html" data-key="navProgress">Progress</a>
+      <a href="settings.html" class="active" data-key="navSettings">Settings</a>
+      <button id="themeToggleHeader">🌙</button>
+    </nav>
+  </header>
+
+  <!-- Main -->
+  <main class="settings-page">
+    <h2 data-key="settingsTitle">Settings</h2>
+    <p data-key="settingsIntro">Customize your experience and stay productive.</p>
+
+    <!-- Theme Section -->
+    <div class="settings-section">
+      <h3 data-key="themeTitle">Theme</h3>
+      <button id="themeToggleBtn" class="btn secondary">Switch Mode</button>
+    </div>
+
+    <!-- Language Section -->
+    <div class="settings-section">
+      <h3 data-key="languageTitle">Language</h3>
+      <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+
+    <!-- Reset Section -->
+    <div class="settings-section">
+      <h3 data-key="resetTitle">Reset Data</h3>
+      <button id="resetData" class="btn secondary">Clear All Study Tasks</button>
+    </div>
+  </main>
+
+  <!-- Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const body = document.body;
+
+      const themeHeaderBtn = document.getElementById("themeToggleHeader");
+      const themeSectionBtn = document.getElementById("themeToggleBtn");
+      const languageSelect = document.getElementById("languageSelect");
+      const resetData = document.getElementById("resetData");
+
+      // ---- TRANSLATIONS ----
+      const translations = {
+        en: {
+          logo: "📘 StudyPlanner",
+          navDashboard: "Dashboard",
+          navPlanner: "Study Plan",
+          navProgress: "Progress",
+          navSettings: "Settings",
+          settingsTitle: "Settings",
+          settingsIntro: "Customize your experience and stay productive.",
+          themeTitle: "Theme",
+          languageTitle: "Language",
+          resetTitle: "Reset Data",
+          switchToLight: "Switch to Light Mode",
+          switchToDark: "Switch to Dark Mode",
+          clearTasksAlert: "All tasks cleared!"
+        },
+        fr: {
+          logo: "📘 Planificateur",
+          navDashboard: "Tableau de bord",
+          navPlanner: "Plan d'étude",
+          navProgress: "Progrès",
+          navSettings: "Paramètres",
+          settingsTitle: "Paramètres",
+          settingsIntro: "Personnalisez votre expérience et restez productif.",
+          themeTitle: "Thème",
+          languageTitle: "Langue",
+          resetTitle: "Réinitialiser les données",
+          switchToLight: "Passer en mode clair",
+          switchToDark: "Passer en mode sombre",
+          clearTasksAlert: "Toutes les tâches ont été supprimées !"
+        },
+        es: {
+          logo: "📘 Planificador",
+          navDashboard: "Tablero",
+          navPlanner: "Plan de estudio",
+          navProgress: "Progreso",
+          navSettings: "Configuración",
+          settingsTitle: "Configuración",
+          settingsIntro: "Personaliza tu experiencia y mantente productivo.",
+          themeTitle: "Tema",
+          languageTitle: "Idioma",
+          resetTitle: "Restablecer datos",
+          switchToLight: "Cambiar a modo claro",
+          switchToDark: "Cambiar a modo oscuro",
+          clearTasksAlert: "¡Todas las tareas han sido eliminadas!"
+        }
+      };
+
+      // ---- LOAD SAVED SETTINGS ----
+      let savedTheme = localStorage.getItem("theme") || "light";
+      let savedLang = localStorage.getItem("language") || "en";
+
+      body.classList.remove("light", "dark");
+      body.classList.add(savedTheme);
+
+      languageSelect.value = savedLang;
+
+      function updateLanguage(lang) {
+        document.querySelectorAll("[data-key]").forEach(el => {
+          const key = el.getAttribute("data-key");
+          if(translations[lang][key]) {
+            el.innerText = translations[lang][key];
+          }
+        });
+        // Update theme button labels
+        const isDark = body.classList.contains("dark");
+        themeSectionBtn.innerText = isDark ? translations[lang].switchToLight : translations[lang].switchToDark;
+      }
+
+      updateLanguage(savedLang);
+
+      // ---- THEME FUNCTION ----
+      function toggleTheme() {
+        const isLight = body.classList.contains("light");
+        body.classList.remove(isLight ? "light" : "dark");
+        body.classList.add(isLight ? "dark" : "light");
+        localStorage.setItem("theme", isLight ? "dark" : "light");
+        themeHeaderBtn.textContent = isLight ? "☀️" : "🌙";
+
+        updateLanguage(languageSelect.value);
+      }
+
+      themeHeaderBtn.addEventListener("click", toggleTheme);
+      themeSectionBtn.addEventListener("click", toggleTheme);
+
+      // ---- LANGUAGE CHANGE ----
+      languageSelect.addEventListener("change", () => {
+        const lang = languageSelect.value;
+        localStorage.setItem("language", lang);
+        updateLanguage(lang);
+      });
+
+      // ---- RESET TASKS ----
+      resetData.addEventListener("click", () => {
+        if (confirm("Are you sure you want to clear all study tasks?")) {
+          localStorage.removeItem("tasks");
+          alert(translations[languageSelect.value].clearTasksAlert);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
